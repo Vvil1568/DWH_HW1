@@ -1,0 +1,14 @@
+with departure_flights as(
+select departure_airport as airport_code, count(*) as departure_flights_num from flights group by departure_airport
+), departure_psngr as(
+select departure_airport as airport_code, count(*) as departure_psngr_num from flights join ticket_flights on flights.flight_id=ticket_flights.flight_id group by departure_airport
+), arrival_flights as(
+select arrival_airport as airport_code, count(*) as arrival_flights_num from flights group by arrival_airport
+), arrival_psngr as(
+select arrival_airport as airport_code, count(*) as arrival_psngr_num from flights join ticket_flights on flights.flight_id=ticket_flights.flight_id group by arrival_airport
+)
+select departure_flights.airport_code, departure_flights.departure_flights_num, departure_psngr.departure_psngr_num,
+ arrival_flights.arrival_flights_num, arrival_psngr.arrival_psngr_num
+ from departure_flights join departure_psngr on departure_flights.airport_code=departure_psngr.airport_code
+                        join arrival_flights on departure_flights.airport_code=arrival_flights.airport_code
+                        join arrival_psngr on departure_flights.airport_code=arrival_psngr.airport_code;
